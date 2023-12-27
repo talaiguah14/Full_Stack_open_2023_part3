@@ -4,13 +4,14 @@ const app = express()
 const cors = require('cors')
 const notesRouter = require('./controllers/notesController')
 const phonebookRouter = require('./controllers/phonebookController')
+const blogsRouter = require('./controllers/blogsContoller')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 
-logger.info('connecting to', config.MONGODB_URI)
+logger.info('connecting to', config.MONGODB_URI_THREE)
 
-mongoose.connect(config.MONGODB_URI)
+mongoose.connect(config.MONGODB_URI_THREE)
   .then(() => {
     logger.info('connected to MongoDB')
   })
@@ -25,6 +26,7 @@ app.use(middleware.requestLogger)
 
 app.use('/api/notes', notesRouter)
 app.use('/api/persons', phonebookRouter)
+app.use('/api/blogs', blogsRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const noteSchema = new mongoose.Schema({
   content: {
@@ -12,6 +13,8 @@ const noteSchema = new mongoose.Schema({
   },
   important: Boolean,
 })
+
+noteSchema.plugin(uniqueValidator)
 
 noteSchema.set('toJSON', {
   transform: (document, returnedObject) => {
