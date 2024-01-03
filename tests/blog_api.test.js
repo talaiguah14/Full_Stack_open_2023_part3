@@ -20,17 +20,17 @@ const initialBlogs = [
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-  let blogObject = new Blog(initialBlogs[0]);
-  await blogObject.save();
-  blogObject = new Blog(initialBlogs[1]);
-  await blogObject.save();
+
+  for(let blog of initialBlogs){
+    let noteObject = new Blog(blog)
+    await noteObject.save()
+  }
 });
 
 describe('all blogs are returned', () => {
   test('a specific blog is within the returned blogs', async () => {
     const response = await api.get('/api/blogs');
 
-    console.log(response.body);
     const titles = response.body.map((r) => r.title);
     expect(titles).toContain('React patterns');
   });
@@ -40,7 +40,6 @@ describe('unique identifier of blog posts is called id', () => {
   test('unique identifier name id', async () => {
     const response = await api.get('/api/blogs');
 
-    console.log(response.body);
     const id = response.body.map((r) => r.id);
     expect(id).toBeDefined();
   });
