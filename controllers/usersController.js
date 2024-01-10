@@ -2,13 +2,8 @@ const bcrypt = require('bcrypt')
 const userRouter = require('express').Router()
 const User = require('../models/userModel')
 
- validarUsers = (body,response) =>{
-
-   
- }
-
 userRouter.get('/',async (request, response)=>{
-    const users = await User.find({}).populate('notes',{ content: 1, date: 1 })
+    const users = await User.find({}).populate('blogs')
     response.json(users)
 });
 
