@@ -30,8 +30,24 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
+const tokenExtractor = (request, response, next) => {
+  try {
+  const token  = request.header('Authorization')
+
+    if(!token){
+      return response.status(401).json({error: 'Access denied'})
+    }
+ 
+  next()
+  } catch (error) {
+    
+  }
+  
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }
