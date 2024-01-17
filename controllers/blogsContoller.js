@@ -20,7 +20,6 @@ blogsRouter.get('/:id', async (request,response,next)=>{
 
 blogsRouter.post('/', async (request, response,next) => {
   const body = request.body;
-
   const decodedToken =  jwt.verify(request.token,process.env.SECRET)
 
   const user = await User.findById(decodedToken.id)
@@ -40,8 +39,17 @@ blogsRouter.post('/', async (request, response,next) => {
 });
 
 blogsRouter.delete('/:id', async (request, response,next) => {
-  await Blog.findByIdAndDelete(request.params.id);
-  response.status(204).end();
+  const blog = await Blog.findById(request.params.id)
+  console.log("blog",blog)
+  const decodedToken =  jwt.verify(request.token,process.env.SECRET)
+
+  if(decodedToken.id.toString()=== blog.user.toString()){
+    await Blog.findByIdAndDelete(request.params.id)
+    response.status(204).end();
+  }else{
+    response.status(401).json({error: 'The user is not authorized to delete this note'});
+  }
+
 });
 
 blogsRouter.put('/:id', async (request, response,next)=>{

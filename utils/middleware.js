@@ -32,11 +32,13 @@ const errorHandler = (error, request, response, next) => {
 
 const tokenExtractor = (request, response, next) => {
   try {
-  const token  = request.header('Authorization')
+  const authorizationHeader   = request.header('Authorization')
 
-    if(!token){
-      return response.status(401).json({error: 'Access denied'})
-    }
+  if (authorizationHeader && authorizationHeader.toLowerCase().startsWith('bearer ')) {
+    request.token = authorizationHeader.substring(7);
+  } else {
+    request.token = null;
+  }
  
   next()
   } catch (error) {
