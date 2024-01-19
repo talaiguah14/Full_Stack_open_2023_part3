@@ -1,7 +1,8 @@
-const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blogModel')
 const User = require('../models/userModel')
+const {userExtractor} = require('../utils/middleware')
+
 
 blogsRouter.get('/', async (request, response,next) => {
   const blogs = await Blog.find({})
@@ -18,15 +19,13 @@ blogsRouter.get('/:id', async (request,response,next)=>{
   }
 });
 
-blogsRouter.post('/', async (request, response,next) => {
+blogsRouter.post('/', userExtractor , async (request, response,next) => {
   const body = request.body;
-  const decodedToken =  jwt.verify(request.token,process.env.SECRET)
-
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   const blog = new Blog({
     title: body.title,
-    author: user.name,
+    author: user.username,
     url: body.url,
     likes: body.likes,
     user: user._id
@@ -38,12 +37,12 @@ blogsRouter.post('/', async (request, response,next) => {
   response.status(201).json(savedBlog);
 });
 
-blogsRouter.delete('/:id', async (request, response,next) => {
+blogsRouter.delete('/:id', userExtractor,async (request, response,next) => {
   const blog = await Blog.findById(request.params.id)
-  console.log("blog",blog)
-  const decodedToken =  jwt.verify(request.token,process.env.SECRET)
 
-  if(decodedToken.id.toString()=== blog.user.toString()){
+  const user = request.user
+
+  if(user.id.toString()=== blog.user.toString()){
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end();
   }else{
