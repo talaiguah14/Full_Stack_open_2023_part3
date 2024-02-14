@@ -27,14 +27,15 @@ blogsRouter.post('/', userExtractor , async (request, response,next) => {
     title: body.title,
     author: user.username,
     url: body.url,
-    likes: body.likes,
+    likes: 0,
     user: user._id
   });
-
+ 
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
   response.status(201).json(savedBlog);
+ 
 });
 
 blogsRouter.delete('/:id', userExtractor,async (request, response,next) => {
